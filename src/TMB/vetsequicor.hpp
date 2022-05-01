@@ -14,6 +14,8 @@ Type vetsequicor(objective_function<Type>* obj) {
     DATA_VECTOR(fmat);
     DATA_MATRIX(G);
     DATA_MATRIX(H);
+    DATA_MATRIX(good);
+    DATA_VECTOR(select);
     DATA_IVECTOR(adim);
     DATA_IVECTOR(mindex);
     DATA_IVECTOR(pindex);
@@ -57,6 +59,8 @@ Type vetsequicor(objective_function<Type>* obj) {
     matrix<Type> GA = G * A;
     matrix<Type> E(Y.rows(), Y.cols() - 1);
     E.setZero();
+    matrix<Type> Aux(Y.rows(), select.size());
+    Aux.setZero();
     matrix<Type> Cond = F - GA * H;
     Type spec_radius = vetsfun::power_iterations_fast(Cond, Type(1e-12), 1000);
     bool stability_test = (spec_radius < Type(1.01));
@@ -69,16 +73,21 @@ Type vetsequicor(objective_function<Type>* obj) {
     }
     vector<Type> Yhat(n);
     Yhat.setZero();
+    int kselect = 0;
     for (int i = 1; i < t; i++) {
         Yhat.array() = (H * states.col(i - 1)).array();
         if(inclx) {
             Yhat.array() += (beta * X.col(i)).array();
         }
-        E.col(i-1) = Y.col(i).array() -  Yhat.array();
+        E.col(i-1) = (Y.col(i).array() -  Yhat.array()) * good.col(i-1).array();
+        if (select(i-1) == 1) {
+            Aux.col(kselect) = E.col(i-1).array();
+            kselect+=1;
+        }
         states.col(i) = (F * states.col(i-1)).array() + (GA * E.col(i-1)).array();
     }
-    E.transposeInPlace();
-    loglik = vetsfun::vetsshrink_lik(E, rho, Type(t), Type(n));
+    Aux.transposeInPlace();
+    loglik = vetsfun::vetsshrink_lik(Aux, rho, Type(t), Type(n));
     return(loglik);
 }
 

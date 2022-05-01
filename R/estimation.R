@@ -10,7 +10,11 @@ prepare_inputs_vets <- function(spec)
     if (any(is.na(d$amat))) {
         d$amat[which(is.na(d$amat))] <- 0.0
     }
-    d$Y <- env$ymat
+    if (any(is.na(env$ymat))) {
+        d$Y <- na.fill(env$ymat, fill = 0)
+    } else {
+        d$Y <- env$ymat
+    }
     fmat <- env$Fmat
     d$fdim <- dim(fmat)
     d$fmat <- as.vector(fmat)
@@ -27,16 +31,19 @@ prepare_inputs_vets <- function(spec)
     d$states <- env$States
     d$xindex <- env$X_index
     if (d$xindex[1] > 0) {
-        d$xindex <- c((env$X_index[1]-1)*d$adim[1] + 1,(d$adim[1]*env$X_index[2])) - 1
+        d$xindex <- c((env$X_index[1] - 1) * d$adim[1] + 1,(d$adim[1]*env$X_index[2])) - 1
         d$xindex <- c(d$xindex[1], length(d$xindex[1]:d$xindex[2]))
         d$betadim <- c(env$model[2], nrow(env$xreg))
     } else {
         d$betadim <- c(env$model[2],1)
     }
+    # d$good
     d$X <- coredata(env$xreg)
     d$G <- as.matrix(env$Gmat)
     d$H <- as.matrix(env$Hmat)
     d$vmodel <- env$model
+    d$good <- t(spec$target$good_matrix)
+    d$select <- t(spec$target$good_index)
     # switch models
     llh_fun <- function(pars, fun, vetsenv) {
         names(pars) <- vetsenv$tmb_names
