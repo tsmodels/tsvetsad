@@ -95,7 +95,7 @@ prepare_inputs_vets <- function(spec)
 #' @aliases estimate_ad
 #' @export
 #'
-estimate_ad.tsvets.spec <- function(object, solver = "nlminb", control = list(trace = 1, eval.max = 300, iter.max = 500), use_hessian = FALSE, ...)
+estimate_ad.tsvets.spec <- function(object, solver = "nlminb", control = list(trace = 0, eval.max = 300, iter.max = 500), use_hessian = FALSE, ...)
 {
     spec_list <- prepare_inputs_vets(object)
     other_opts <- list(...)
