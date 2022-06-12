@@ -1,7 +1,7 @@
 #' @rawNamespace useDynLib(tsvetsad, .registration=TRUE); useDynLib(tsvetsad_TMBExports)
 #' @keywords internal
 #' @importFrom TMB MakeADFun
-#' @importFrom stats nlminb na.omit
+#' @importFrom stats nlminb na.omit optim
 #' @import data.table
 #' @import methods
 #' @importFrom zoo na.fill coredata
