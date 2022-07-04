@@ -10,6 +10,7 @@
   solver = "nlminb",
   control = list(trace = 0, eval.max = 300, iter.max = 500),
   use_hessian = FALSE,
+  power_iterations = 500,
   ...
 )
 }
@@ -21,6 +22,9 @@
 \item{control}{Solver control parameters.}
 
 \item{use_hessian}{Whether to include the hessian in the calculation.}
+
+\item{power_iterations}{number of iterations for the fast power iterations function
+for finding the maximum eigenvalues during estimation.}
 
 \item{...}{additional parameters passed to the estimation function}
 }

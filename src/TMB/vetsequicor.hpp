@@ -26,6 +26,8 @@ Type vetsequicor(objective_function<Type>* obj) {
     DATA_IVECTOR(betadim);
     DATA_IVECTOR(vmodel);
     PARAMETER_VECTOR(pars);
+    DATA_INTEGER(maxiter);
+    int maxit = maxiter;
     //timesteps
     int t = vmodel(0);
     //series
@@ -62,7 +64,7 @@ Type vetsequicor(objective_function<Type>* obj) {
     matrix<Type> Aux(Y.rows(), select.size());
     Aux.setZero();
     matrix<Type> Cond = F - GA * H;
-    Type spec_radius = vetsfun::power_iterations_fast(Cond, Type(1e-12), 1000);
+    Type spec_radius = vetsfun::power_iterations_fast(Cond, Type(1e-12), maxit);
     bool stability_test = (spec_radius < Type(1.01));
     REPORT(spec_radius);
     Type loglik = 0.0;

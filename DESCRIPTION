@@ -1,7 +1,7 @@
 Package: tsvetsad
 Type: Package
 Title: VETS models estimation using automatic differentiation
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: 
     person(given = "Alexios",
            family = "Galanos",

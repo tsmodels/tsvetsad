@@ -87,6 +87,8 @@ prepare_inputs_vets <- function(spec)
 #' @param solver Only \dQuote{nlminb} currently supported.
 #' @param use_hessian Whether to include the hessian in the calculation.
 #' @param control Solver control parameters.
+#' @param power_iterations number of iterations for the fast power iterations function
+#' for finding the maximum eigenvalues during estimation.
 #' @param ... additional parameters passed to the estimation function
 #' @return An list of coefficients and other information.
 #' @details This function is not expected to be used by itself but rather as a plugin
@@ -95,7 +97,8 @@ prepare_inputs_vets <- function(spec)
 #' @aliases estimate_ad
 #' @export
 #'
-estimate_ad.tsvets.spec <- function(object, solver = "nlminb", control = list(trace = 0, eval.max = 300, iter.max = 500), use_hessian = FALSE, ...)
+estimate_ad.tsvets.spec <- function(object, solver = "nlminb", control = list(trace = 0, eval.max = 300, iter.max = 500), use_hessian = FALSE,
+                                    power_iterations = 500, ...)
 {
     spec_list <- prepare_inputs_vets(object)
     other_opts <- list(...)
@@ -104,6 +107,7 @@ estimate_ad.tsvets.spec <- function(object, solver = "nlminb", control = list(tr
     } else {
         silent <- TRUE
     }
+    spec_list$data$maxiter <- as.integer(power_iterations)
     names(spec_list$par_list$pars) <- spec_list$parnames_estimate
     fun <- try(MakeADFun(data = spec_list$data, hessian = use_hessian, parameters = spec_list$par_list, DLL = "tsvetsad_TMBExports",
                          trace = FALSE, silent = silent), silent = FALSE)
